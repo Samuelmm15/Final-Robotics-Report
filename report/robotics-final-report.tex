@@ -217,17 +217,90 @@ Para concluir con la práctica de Cinemática Directa mediante Denavit Hartenber
 
 \section{¿Qué es la Cinemática Inversa?}
 
+Mientras que la cinemática directa se ocupa de calcular la posición y orientación del extremo del robot dado un conjunto de parámetros de articulación, la \emph{cinemática inversa} implica encontrar las configuraciones de las articulaciones necesarias para alcanzar una posición y orientación del extremo. La cinemática inversa es un problema más difícil que la cinemática directa, ya que puede haber más de una solución posible, o ninguna. Además, la cinemática inversa puede ser más difícil de calcular que la cinemática directa, ya que puede requerir la resolución de una ecuación no lineal.
+
+La cinemática inversa es esencial en la programación de robots ya que permite determinar cómo deben moverse las articulaciones para lograr una tarea específica.
+
 \section{Explicación del código suministrado}
+
+El script en python suministrado para la implementación de la práctica de cinemática inversa se puede observar a continuación:
+
+\lstinputlisting[style=python, caption={Script de Cinemática Inversa}, label=python_script]{src/scripts/Inverse-Kinematics-script.py}
+
+Como se puede ver en el script adjunto anteriormente, se realiza la implementación de un script genérico que permite realizar el cálculo de la cinemática inversa de un robot mediante el método de Cierre de Cadena Cinemática (CCD). El método CCD es un algoritmo iterativo que comienza con una estimación inicial de la configuración de las articulaciones y luego mejora la estimación en cada iteración. El algoritmo CCD se puede resumir en los siguientes pasos:
+
+\begin{enumerate}
+    \item Seleccionar un punto de destino para el extremo del robot.
+    \item Para cada articulación, comenzando con la articulación más alejada del extremo del robot, calcule el vector desde la articulación hasta el punto de destino.
+    \item Calcule el vector desde la articulación hasta el extremo del robot.
+    \item Calcule el ángulo entre estos dos vectores.
+    \item Gire la articulación por este ángulo.
+    \item Repita los pasos 2 a 5 hasta que el extremo del robot esté lo suficientemente cerca del punto de destino.
+    \item Repita los pasos 1 a 6 para cada punto de destino.
+    \item Repita los pasos 1 a 7 hasta que el robot alcance su posición final.
+    \item Repita los pasos 1 a 8 para cada posición final.
+    \item Repita los pasos 1 a 9 hasta que el robot complete su trayectoria.
+\end{enumerate}
+
+Después de definir el algoritmo CCD, se determinan las funciones para mostrar orígenes de coordenadas y representar gráficamente el robot, el programa establece valores iniciales arbitrarios para las articulaciones y longitudes de eslabones. El usuario proporciona las coordenadas del punto objetivo, y utilizando la cinemática directa se calcula la posición inicial y se inicia un bucle iterativo para ajustar las articulaciones de manera que el extremo del robot se acerque al objetivo. En cada iteración, se muestra la posición actual, los orígenes de coordenadas y la distancia al objetivo. Las iteraciones continúan hasta que se alcanza un umbral de convergencia o se supera un límite predefinido de iteraciones.
+
+Finalmente, se presentan los resultados, incluyendo la cantidad de iteraciones necesarias, el umbral de convergencia, la distancia al objetivo y lo valores finales de las articulaciones.
 
 \section{Implementación de la Cinemática Inversa}
 
+Tras la explicación del funcionamiento del script de \emph{cinemática inversa} proporcionado, se realiza la implementación de esta de la siguiente manera:
+
+\lstinputlisting[style=python, caption={Script de Cinemática Inversa implementado de manera correcta}, label=python_script]{src/scripts/Inverse-Kinematics-result.py}
+
+Para comenzar con los cambios realizados dentro del script que se puede observar anteriormente, se realiza la implementación de la cinemática inversa donde se presenta un bucle iterativo basado en el método de Cierre de Cadena Cinemática (CCD) para calcular la cinemática inversa. El bucle continúa hasta que la distancia entre la posición actual del extremo del robot y el objetivo sea menor que un umbral de convergencia (EPSILON). Durante cada iteración, se ajustan las articulaciones del robot para acercar el extremo al objetivo.
+
+El proceso iterativo incluye las siguientes etapas:
+
+\begin{enumerate}
+    \item Se almacena la distancia actual como referencia (prev) para evaluar la convergencia.
+    \item Para cada articulación, se calcula la cinemática inversa, tomando en cuenta si la articulación es prismática o rotacional.
+    \begin{enumerate}
+        \item En el caso de una articulación prismática, se ajusta la longitud del eslabón y se normaliza si excede los límites.
+        \item Para articulaciones rotacionales, se determina el ángulo de ajuste necesario y se normaliza si es necesario.
+    \end{enumerate}
+    \item Se actualiza la posición del robot después de cada ajuste.
+\end{enumerate}
+
+Tras la implementación de la cinemática inversa, se procede a la inclusión de una función nueva dentro del script, denominada 
+como \emph{read\_input\_file}, la cual permite la lectura de un fichero de texto, en el cual se encuentran los valores de los 
+distintos parámetros como el tipo de brazo, sus ángulos, los limites superiores, los límites inferiores. Un ejemplo de este 
+fichero de texto se puede observar a continuación:
+
+\lstinputlisting[style=bash, caption={Ejemplo de fichero de entrada}, label=example_file]{src/scripts/example-of-type-file-inverse-kinematics.txt}
+
+Finalmente como último cambio realizado al script de cinemática inversa, se realiza la implementación de un \emph{\textbf{menú de ayuda}} que permite al usuario conocer los parámetros que se deben introducir para la ejecución del script, junto con la forma de ejecutar el script.
+
 \section{Ejecución del código}
+
+Tras la explicación de la implementación de la cinemática inversa, se procede a la ejecución del script para la comprobación del funcionamiento del mismo. Para ello, se ejecuta el siguiente comando en la terminal:
+
+\begin{lstlisting}[style=bash, caption={Ejecución del script de Cinemática Inversa}, label=bash]
+  $  python3 Inverse-Kinematics-result.py  input-file.txt 15 -10
+\end{lstlisting}
+
+Tras esto, se obtiene el siguiente resultado:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{src/img/Inverse-Kinematics-result.png}
+    \caption{Resultado de la ejecución del script de Cinemática Inversa}
+    \label{fig:inverse-kinematics-result}
+\end{figure}
 
 \section{Parámetros modificados}
 
-\section{Mejoras en la implementación}
+Para la implementación de cinemática inversa, se han realizado numerosas pruebas con los parámetros que existen dentro de los ficheros de entrada del programa, es por ello que se han realizado numerosas pruebas con los cambios que se producirían si por ejemplo si se realizan cambios en el tipo de articulación que existe en el brazo, es decir, 0 si se trata de una articulación rotacional y 1 si se trata de una articulación prismática. 
+
+Además, se han realizado pruebas con los cambios que se producirían si se modifican los valores en los \emph{límites superiores} e \emph{inferiores} de las articulaciones, es decir, si se cambian los valores de los límites superiores e inferiores de las articulaciones, se producen cambios en el resultado final de la cinemática inversa. Por último, se han realizado pruebas con los ángulos de las articulaciones, es decir, con los valores de \emph{theta} o finalmente con la \emph{longitud} de los distintos eslabones que componen el brazo.
 
 \section{Conclusiones}
+
+Para concluir, se puede decir que se ha conseguido realizar la implementación de la cinemática inversa de un robot manipulador mediante el empleo del método de Cierre de Cadena Cinemática (CCD). Esta práctica me ha resultado personalmente más interesante en cuanto a su desarrollo y en cuanto a su ejecución, ya que el hecho de poder ver como dependiendo de los valores que se le introduzcan a los distintos eslabones del brazo, se pueda alcanzar el objetivo final de manera más rápido o más lenta dependiendo de los valores que se le introduzcan, me ha resultado muy interesante. Además, cabe destacar que en cuanto a esta práctica no se me ha ocurrido ninguna mejora, ya que la forma de ver como se desplaza el brazo mediante la librería de \emph{matplotlib}, me parece que de esta manera es mucho más cómoda y sencilla de entender y comprender el funcionamiento de la cinemática inversa.
 
 \chapter{Localización}
 
@@ -258,6 +331,7 @@ Para concluir con la práctica de Cinemática Directa mediante Denavit Hartenber
   \bibitem{4} Samuel Martín Morales. [2023]. Robot-Localization. GitHub. Recuperado de \url{https://github.com/Samuelmm15/Robot-Localization.git}.
   \bibitem{5} Universidad de La Laguna. [2023]. Cinemática Directa mediante Denavit-Hartenberg. Universidad de La Laguna. \url{https://drive.google.com/file/d/1639F9ebw14zquNaZcDf6o_u-_Tpaksh4/view?usp=sharing}
   \bibitem{6} Comunidad Python. [2023]. bpy - Blender Python. Comunidad Python. \url{https://pypi.org/project/bpy/}
+  \bibitem{7} Escamilla Losoyo José de Jesús. [2020]. Cinemática inversa. Studocu. \url{https://www.studocu.com/es-mx/document/instituto-tecnologico-de-leon/robotica/cinematica-inversa/12281135}
 \end{thebibliography}
 
 \end{document}
