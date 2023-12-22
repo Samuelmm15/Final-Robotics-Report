@@ -1,0 +1,9 @@
+[submodule "Direct-Kinematics-using-Denavit-Hartenberg"]
+	path = Direct-Kinematics-using-Denavit-Hartenberg
+	url = git@github.com:Samuelmm15/Direct-Kinematics-using-Denavit-Hartenberg.git
+[submodule "Inverse-Kinematics"]
+	path = Inverse-Kinematics
+	url = git@github.com:Samuelmm15/Inverse-Kinematics.git
+[submodule "Robot-Localization"]
+	path = Robot-Localization
+	url = git@github.com:Samuelmm15/Robot-Localization.git
