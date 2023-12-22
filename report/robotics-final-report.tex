@@ -1,0 +1,263 @@
+\documentclass[11pt]{report}
+
+% Paquetes y configuraciones adicionales
+\usepackage[spanish]{babel} % Cargar el paquete babel con la opción en español
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{titlesec}
+\usepackage{geometry}
+\usepackage[hidelinks]{hyperref}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{nameref}
+\usepackage{listings}
+\usepackage{wrapfig}
+\usepackage{xcolor}
+
+\definecolor{bashgreen}{RGB}{0, 128, 0}
+\definecolor{bashgray}{RGB}{128, 128, 128}
+\definecolor{bashblue}{RGB}{0, 0, 255}
+\definecolor{bashorange}{RGB}{255, 165, 0}
+
+% Configuración para resaltar la sintaxis de Python
+\lstdefinestyle{python}{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    commentstyle=\color{green!40!black},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{gray},
+    numbers=left,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{black!30},
+    backgroundcolor=\color{gray!5},
+    tabsize=4,
+    showstringspaces=false,
+}
+
+% Configuración para resaltar la sintaxis de bash
+\lstdefinestyle{bash}{
+    language=bash,
+    basicstyle=\ttfamily\small,
+    commentstyle=\color{bashgreen},
+    keywordstyle=\color{bashblue},
+    numberstyle=\tiny\color{bashgray},
+    numbers=left,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{black!30},
+    backgroundcolor=\color{gray!5},
+    tabsize=4,
+    showstringspaces=false,
+}
+
+% Configura los márgenes
+\geometry{
+    left=2cm,   % Ajusta este valor al margen izquierdo deseado
+    right=2cm,  % Ajusta este valor al margen derecho deseado
+    top=2cm,
+    bottom=2cm,
+}
+
+% Redefinir el formato del capítulo
+\titleformat{\chapter}[block]
+  {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{1em}{\Huge}
+
+% Ajustar el espaciado antes y después del título del capítulo
+\titlespacing*{\chapter}{0pt}{0pt}{20pt}
+
+% Configuración de los títulos de las secciones
+\titlespacing{\section}{0pt}{\parskip}{\parskip}
+\titlespacing{\subsection}{0pt}{\parskip}{\parskip}
+\titlespacing{\subsubsection}{0pt}{\parskip}{\parskip}
+
+\begin{document}
+
+% Portada del informe
+
+\title{Robótica Computacional}
+\author{Samuel Martín Morales  \texttt{alu0101359526@ull.edu.es}}
+\date{\today}
+
+\maketitle
+
+% Índice
+\tableofcontents
+
+\chapter{Introducción}
+
+Durante el desarrollo de la asignatura \emph{Robótica Computacional} se ha realizado la implementación de tres prácticas relacionadas con el contenido teórico que se ha visto a lo largo de las semanas lectivas. Además de las tres prácticas mencionadas, se ha solicitado una cuarta práctica denominada como \emph{Filtro de partículas}, la cual se ha determinado como práctica opcional. Por ello, en este documento se detallará el desarrollo de las tres primeras prácticas, dejando la cuarta práctica como trabajo futuro, debido a la falta de tiempo para su desarrollo.
+
+\chapter{Cinemática directa mediante Denavit Hartenberg}
+
+\section{¿Qué es la Cinemática Directa?}
+
+La cinemática de los manipuladores es la ciencia que estudia el movimiento de los componentes físicos del robot sin tener en cuenta o considerar las fuerzas que intervienen en el movimiento. Dentro de la cinemática se realiza el estudio de la velocidad, la posición, la aceleración con respecto al tiempo o a cualquier otra variable. Por tanto, la cinemática directa es el problema estático geométrico de calcular la posición y la orientación del efector terminal de manipulador. Para poder enfrentar este problema es necesario utilizar herramientas como las matrices de rotación y traslación, las cuales permiten representar el movimiento de un sistema de referencia a otro.
+
+En cuanto al caso concreto de la cinemática directa mediante Denavit Hartenberg, se trata de un método para describir la cinemática de un manipulador articulado. Este método fue desarrollado por Jacques Denavit y Richard Hartenberg en 1955. El método de Denavit-Hartenberg es un método de notación para describir los sistemas de coordenadas de los eslabones de un robot manipulador. Este método se basa en la asignación de un sistema de coordenadas a cada uno de los eslabones del robot, de tal forma que se pueda describir la posición y orientación de cada uno de los eslabones con respecto a su eslabón anterior. Para ello, se utiliza una serie de parámetros que se asignan a cada uno de los eslabones del robot, los cuales son:
+
+\begin{itemize}
+    \item \textbf{Distancia $d_i$}: Distancia entre los ejes $Z_{i-1}$ y $Z_i$ a lo largo del eje $X_i$.
+    \item \textbf{Ángulo $\theta_i$}: Ángulo entre los ejes $X_{i-1}$ y $X_i$ medido alrededor del eje $Z_{i-1}$.
+    \item \textbf{Distancia $a_i$}: Distancia entre los ejes $X_{i-1}$ y $X_i$ a lo largo del eje $Z_{i-1}$.
+    \item \textbf{Ángulo $\alpha_i$}: Ángulo entre los ejes $Z_{i-1}$ y $Z_i$ medido alrededor del eje $X_i$.
+    \item \textbf{Ángulo $\theta_i$}: Ángulo entre los ejes $X_{i-1}$ y $X_i$ medido alrededor del eje $Z_{i-1}$.
+\end{itemize}
+
+\section{Explicación del código suministrado}
+
+El script en python suministrado para la implementación de la práctica de cinemática directa mediante Denavit Hartenberg se puede observar a continuación: 
+
+\lstinputlisting[style=python, caption={Script de Cinemática Directa}, label=python_script]{src/scripts/Direct-Kinematics-script.py}
+
+Como se puede ver en el script adjunto anteriormente, realiza la cinemática directa de un robot con dos articulaciones rotativas (\texttt{para el caso del robot del script inicial}) . Utiliza la representación de Denavit-Hartenberg (D-H) para describir la geometría del robot y calcula las matrices de transformación homogénea para cada articulación. Los ángulos de las articulaciones se introducen como argumentos de línea de comandos.
+
+El script utiliza funciones para convertir la descripción del robot en una secuencia de puntos para su representación visual en 3D. La salida incluye los orígenes de coordenadas y la representación gráfica del robot utilizando la biblioteca \emph{matplotlib}.
+
+En términos generales, el script demuestra cómo determinar la posición y orientación final de un robot manipulador dados los ángulos de sus articulaciones. Los resultados de la cinemática directa se muestran tanto numéricamente como en una representación gráfica del robot en un entorno tridimensional.
+
+\section{Implementación de la Cinemática Directa}
+
+Tras la explicación del funcionamiento del script en \emph{Python} adjunto en el apartado anterior, se procede a realizar la implementación de la cinemática directa mediante Denavit Hartenberg de una serie de robots manipuladores que se pueden observar en el pdf adjunto \cite{5}. Pero, para no extender demasiado el documento, se va a tomar como ejemplo la implementación de la cinemática directa mediante Denavit Hartenberg del manipulador número \emph{5} del pdf adjunto \cite{5}.
+
+\subsection{Representación gráfica del manipulador}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{src/img/Manipulador-5.png}
+    \caption{Representación gráfica del manipulador número 5}
+    \label{fig:robot5}
+\end{figure}
+
+\subsection{Implementación de la cinemática directa del robot número 5}
+
+Tras la visualización del robot número 5 en la figura \ref{fig:robot5}, se procede a realizar la implementación de la cinemática directa del robot. Para ello, se va a utilizar el script en \emph{Python} adjunto en el apartado anterior, modificando los parámetros de la tabla Denavit Hartenberg de la siguiente forma:
+
+\begin{table}[htbp]
+  \centering
+  \caption{Parámetros D-H}
+  \begin{tabular}{|c|c|c|c|c|}
+      \hline
+      \textbf{Articulación} & $\mathbf{d_i}$ & $\mathbf{\theta_i}$ & $\mathbf{a_i}$ & $\mathbf{\alpha_i}$ \\
+      \hline
+      05 & 5 & $p[0]$ & 0 & -90 \\
+      1 & 2 & 0 & 0 & 0 \\
+      15 & 0 & $p[1]$ & 3 & 0 \\
+      2 & -2 & -90 & 0 & -90 \\
+      3 & 5 & $p[2]$ & 0 & 90 \\
+      41 & 0 & $-p[3] + 90$ & 1 & 0 \\
+      42 & 0 & $p[3] + 90$ & 1 & 0 \\
+      ef & 0 & 90 & 1 & 0 \\
+      \hline
+  \end{tabular}
+\end{table}
+
+Una vez se tienen modificados los parámetros de la tabla, se procede a la modificación del número de manipuladores permitidos por el script, de tal manera que finalmente este toma el siguiente aspecto:
+
+\lstinputlisting[style=python, caption={Script de Cinemática Directa del Manipulador 5}, label=python_script]{src/scripts/Manipulador-5.py}
+
+\section{Ejecución del código}
+
+Para la ejecución del código, se debe ejecutar el siguiente comando en la terminal:
+
+\begin{lstlisting}[style=bash, caption={Ejecución del script de Cinemática Directa del Manipulador 5}, label=bash]
+  $  python3 Manipulador-5.py 10 20 30 30
+\end{lstlisting}
+
+Tras esto, se obtiene el siguiente resultado:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{src/img/Manipulador-5-resultado.png}
+    \caption{Resultado de la ejecución del script de Cinemática Directa del Manipulador 5}
+    \label{fig:robot5-result}
+\end{figure}
+
+\section{Parámetros modificados}
+
+Los parámetros modificados en la implementación de la cinemática directa del robot número 5 han sido los siguientes:
+
+\begin{itemize}
+    \item \textbf{Distancia $d_i$}: Se ha modificado el valor de la distancia $d_i$ de la articulación 05, de tal manera que se ha cambiado de 0 a 5.
+    \item \textbf{Ángulo $\theta_i$}: Se ha modificado el valor del ángulo $\theta_i$ de la articulación 05, de tal manera que se ha cambiado de 0 a $p[0]$.
+    \item \textbf{Ángulo $\alpha_i$}: Se ha modificado el valor del ángulo $\alpha_i$ de la articulación 05, de tal manera que se ha cambiado de 0 a -90.
+    \item \textbf{Distancia $d_i$}: Se ha modificado el valor de la distancia $d_i$ de la articulación 1, de tal manera que se ha cambiado de 0 a 2.
+    \item \textbf{Ángulo $\theta_i$}: Se ha modificado el valor del ángulo $\theta_i$ de la articulación 1, de tal manera que se ha cambiado de 0 a 0.
+    \item \textbf{Distancia $a_i$}: Se ha modificado el valor de la distancia $a_i$ de la articulación 15, de tal manera que se ha cambiado de 0 a 3.
+    \item \textbf{Ángulo $\alpha_i$}: Se ha modificado el valor del ángulo $\alpha_i$ de la articulación 15, de tal manera que se ha cambiado de 0 a 0.
+    \item \textbf{Distancia $d_i$}: Se ha modificado el valor de la distancia $d_i$ de la articulación 2, de tal manera que se ha cambiado de 0 a -2.
+    \item \textbf{Ángulo $\theta_i$}: Se ha modificado el valor del ángulo $\theta_i$ de la articulación 2, de tal manera que se ha cambiado de 0 a -90.
+    \item \textbf{Ángulo $\alpha_i$}: Se ha modificado el valor del ángulo $\alpha_i$ de la articulación 2, de tal manera que se ha cambiado de 0 a -90.
+    \item \textbf{Distancia $d_i$}: Se ha modificado el valor de la distancia $d_i$ de la articulación 3, de tal manera que se ha cambiado de 0 a 5.
+    \item \textbf{Ángulo $\theta_i$}: Se ha modificado el valor del ángulo $\theta_i$ de la articulación 3, de tal manera que se ha cambiado de 0 a $p[2]$.
+    \item \textbf{Ángulo $\alpha_i$}: Se ha modificado el valor del ángulo $\alpha_i$ de la articulación 3, de tal manera que se ha cambiado de 0 a 90.
+    \item \textbf{Ángulo $\theta_i$}: Se ha modificado el valor del ángulo $\theta_i$ de la articulación 41, de tal manera que se ha cambiado de 0 a $-p[3] + 90$.
+    \item \textbf{Ángulo $\theta_i$}: Se ha modificado el valor del ángulo $\theta_i$ de la articulación 42, de tal manera que se ha cambiado de 0 a $p[3] + 90$.
+    \item \textbf{Ángulo $\theta_i$}: Se ha modificado el valor del ángulo $\theta_i$ de la articulación ef, de tal manera que se ha cambiado de 0 a 90.
+    \item \textbf{Ángulo $\alpha_i$}: Se ha modificado el valor del ángulo $\alpha_i$ de la articulación ef, de tal manera que se ha cambiado de 0 a 0.
+    \item \textbf{Distancia $a_i$}: Se ha modificado el valor de la distancia $a_i$ de la articulación ef, de tal manera que se ha cambiado de 0 a 1.
+\end{itemize}
+
+Como se puede observar, dependiendo del manipulador que quiera ser implementado, se deben modificar los parámetros de la tabla Denavit Hartenberg de una forma u otra. Es decir, de manera previa, se deben conocer los parámetros de la tabla Denavit Hartenberg del manipulador que se quiere implementar, o en su defecto, como para el caso de la práctica implementada y su modificación, estos valores deben de ser calculados previamente.
+
+\section{Mejoras en la implementación}
+
+Tras la explicación del script de cinemática directa suministrado, se pueden tomar como mejoras de esta práctica pues el hecho de la visualización final del manipulador, es decir, se podría realizar la implementación de la visualización del manipulador en otros tipos de entornos gráficos, como por ejemplo, \emph{Blender}. Es decir, se podría realizar la implementación de la visualización del manipulador en un entorno gráfico más realista, en el cual se podría observar el manipulador en un entorno tridimensional más realista, de tal manera que el alumnado pueda comprender de manera mucho más sencilla y visual el funcionamiento de la cinemática directa mediante Denavit Hartenberg.
+
+Con todo esto comentado, se podría realizar la implementación de la práctica en python de la misma manera que hasta el momento, pero tras la explicación de la matriz de Denavit Hartenberg, se podría trasladar la representación gráfica de python mediante el empleo de la biblioteca \emph{matplotlib} a un entorno gráfico más realista como \emph{Blender}, haciendo uso de librerías como \emph{bpy} \cite{6}.
+
+
+\section{Conclusiones}
+
+Para concluir con la práctica de Cinemática Directa mediante Denavit Hartenberg, se puede decir que se ha conseguido realizar la implementación de la cinemática directa de un robot manipulador mediante el empleo de la representación de Denavit Hartenberg. Además, se ha conseguido realizar la implementación de la visualización del robot manipulador en un entorno gráfico mediante el empleo de la biblioteca \emph{matplotlib}. Pero, como persona a la que le gusta el mundo de la robótica, me hubiera gustado realizar la implementación de la visualización del robot manipulador en un entorno gráfico más realista como \emph{Blender}, o poder ver su funcionamiento dentro de un manipulador real, ya sea como explicación de la práctica por parte del profesorado, pero, me faltó como esa emoción de poder ver el resultado de la práctica en la realidad.
+
+\chapter{Cinemática inversa}
+
+\section{¿Qué es la Cinemática Inversa?}
+
+\section{Explicación del código suministrado}
+
+\section{Implementación de la Cinemática Inversa}
+
+\section{Ejecución del código}
+
+\section{Parámetros modificados}
+
+\section{Mejoras en la implementación}
+
+\section{Conclusiones}
+
+\chapter{Localización}
+
+\section{¿Qué es la localización?}
+
+\section{Explicación del código suministrado}
+
+\section{Implementación de la localización}
+
+\section{Ejecución del código}
+
+\section{Parámetros modificados}
+
+\section{Mejoras en la implementación}
+
+\section{Conclusiones}
+
+\chapter{Filtro de partículas}
+
+\section{¿Qué es un filtro de partículas?}
+
+\chapter{Conclusiones}
+
+\begin{thebibliography}{99}
+  \bibitem{1} UdeSantigoVirtual. [2023]. Herramientas matemáticas. Universidad de Santiago de Chile. Recuperado de \url{http://www.udesantiagovirtual.cl/moodle2/mod/book/view.php?id=24916}
+  \bibitem{2} Samuel Martín Morales. [2023]. Direct-Kinematics-using-Denavit-Hartenberg. GitHub. Recuperado de \url{https://github.com/Samuelmm15/Direct-Kinematics-using-Denavit-Hartenberg.git}
+  \bibitem{3} Samuel Martín Morales. [2023]. Inverse-Kinematics. GitHub. Recuperado de \url{https://github.com/Samuelmm15/Inverse-Kinematics.git}.
+  \bibitem{4} Samuel Martín Morales. [2023]. Robot-Localization. GitHub. Recuperado de \url{https://github.com/Samuelmm15/Robot-Localization.git}.
+  \bibitem{5} Universidad de La Laguna. [2023]. Cinemática Directa mediante Denavit-Hartenberg. Universidad de La Laguna. \url{https://drive.google.com/file/d/1639F9ebw14zquNaZcDf6o_u-_Tpaksh4/view?usp=sharing}
+  \bibitem{6} Comunidad Python. [2023]. bpy - Blender Python. Comunidad Python. \url{https://pypi.org/project/bpy/}
+\end{thebibliography}
+
+\end{document}
