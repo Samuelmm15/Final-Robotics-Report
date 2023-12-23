@@ -15,6 +15,24 @@
 \usepackage{listings}
 \usepackage{wrapfig}
 \usepackage{xcolor}
+\usepackage{fancyhdr}
+
+% Configuración de fancyhdr
+\pagestyle{fancy}
+\fancyhf{}  % Borra los encabezados y pies de página actuales
+
+% Configuración del encabezado
+\fancyhead[L]{\textbf{\leftmark}}  % Nombre del capítulo a la izquierda
+\fancyhead[C]{}  % Contenido del encabezado en el centro
+\fancyhead[R]{\thepage}  % Número de página a la derecha
+
+% Configuración del pie de página
+\fancyfoot[L]{\today}  % Fecha a la izquierda
+\fancyfoot[C]{}  % Contenido del pie de página en el centro
+\fancyfoot[R]{\textit{Robótica Computacional}}  % Nombre del documento a la derecha
+
+% Línea horizontal en la parte superior del encabezado
+\renewcommand{\headrulewidth}{0.4pt}
 
 \definecolor{bashgreen}{RGB}{0, 128, 0}
 \definecolor{bashgray}{RGB}{128, 128, 128}
@@ -306,23 +324,103 @@ Para concluir, se puede decir que se ha conseguido realizar la implementación d
 
 \section{¿Qué es la localización?}
 
+La localización es el problema de estimar el estado de un robot en un entorno desconocido. El estado de un robot incluye su posición y orientación, así como cualquier otra información que pueda ser útil para determinar su comportamiento futuro. La localización es un problema difícil porque el entorno es desconocido y el robot no tiene acceso a información perfecta sobre su estado. En cambio, el robot debe utilizar información parcial y ruidosa para estimar su estado.
+
+La localización de robots móviles consiste en determinar la posición del robot en relación a un mapa dado del entorno. El problema principal de la localización de un robot móvil reside en que su posición no puede ser medida directamente y debe ser inferida de datos sensoriales. Además, una única medición suele ser de manera habitual insuficiente y el robot debe integrar datos a lo largo del tiempo para determinar su posición.
+
+En el caso de la práctica solicitada por la asignatura de \emph{Robótica Computacional}, el robot móvil no tiene datos sensoriales, sino que se establecen una serie de \emph{"balizas"} en el entorno, las cuales permiten al robot móvil conocer su posición en el entorno, además, se hace uso de otro robot móvil denominado como \emph{"robot rea;"}, el cual se encarga de marcar la diferenciación con respecto al robot móvil al que se debe de aplicar la localización cada vez que este se desvíe o se pierda.
+
 \section{Explicación del código suministrado}
+
+El código suministrado para la implementación de la práctica de localización se puede observar a continuación en dos ficheros distintos, el primero de ellos referente a los robots móviles:
+
+\lstinputlisting[style=python, caption={Script de robot móvil para localización}, label=robot_file]{src/scripts/robot-script.py}
+
+En cuanto al segundo de los scripts, se trata del script referente a los cálculos de las distintas operaciones necesarias para la realización de la localización:
+
+\lstinputlisting[style=python, caption={Script de localización}, label=localization_file]{src/scripts/Localization-script.py}
+
+Teniendo en cuenta los script adjuntos anteriormente, este, simula el movimiento de un robot en un entorno bidimensional y visualiza tanto la trayectoria planificada como la trayectoria real seguida por el robot. A continuación, se proporciona una explicación detallada de su funcionamiento:
+
+El script comienza importando módulos esenciales, como sys para la manipulación de variables del intérprete, math para funciones matemáticas, y un módulo llamado robot que contiene la definición de la clase robot.
+
+Se definen varias funciones útiles, como distancia para calcular la distancia euclidiana entre dos puntos, angulo\_rel  para determinar el ángulo relativo entre la posición actual del robot y un punto objetivo, y mostrar para visualizar gráficamente las trayectorias ideales y reales del robot.
+
+A continuación, se establecen constantes como la pose inicial del robot (P\_INICIAL), la velocidad lineal (V\_LINEAL), la velocidad angular (V\_ANGULAR), la resolución temporal en fotogramas por segundo (FPS), y parámetros que afectan el comportamiento del robot.
+
+Se define una serie de trayectorias predefinidas en la lista trayectorias, y el script toma como entrada de usuario un índice que selecciona una de estas trayectorias.
+
+El script inicializa objetos robot para representar al robot en condiciones ideales (ideal) y condiciones reales con ruido (real). Se establecen parámetros de ruido y pose inicial para ambos robots.
+
+La simulación del movimiento del robot se lleva a cabo en un bucle, calculando velocidades lineales y angulares para alcanzar cada punto en la trayectoria. La simulación continúa hasta que la distancia al objetivo es menor que un umbral (EPSILON) o hasta que se alcanza un límite de iteraciones.
+
+Finalmente, se imprimen resultados como el recorrido total, la distancia real al objetivo, y se utiliza la función mostrar para representar gráficamente las trayectorias ideales y reales del robot. Es importante tener en cuenta que la funcionalidad del script depende del módulo robot.
 
 \section{Implementación de la localización}
 
+Tras la explicación del funcionamiento del script de \emph{localización} proporcionado, se realiza la implementación de esta de la siguiente manera:
+
+\lstinputlisting[style=python, caption={Script de localización implementado}, label=localization_file]{src/scripts/Localization-script-implementation.py}
+
+El script ejecuta una serie de trayectorias, cada una definida por una lista de puntos de destino. Durante la simulación, el robot ajusta su posición y orientación para seguir la trayectoria ideal, con la posibilidad de introducir ruido en las mediciones del sensor. Además, se realiza la implementación de localización basada en la comparación de mediciones de sensores con la posición estimada del robot, utilizando un método de búsqueda en una cuadrícula para encontrar la posición más probable. Es decir, cuando se determina que el robot ideal se ha desviado una cierta variación con respecto al robot real, se aplica la localización para determinar la posición del robot real. Esta localización, se encarga de realizar una búsqueda del robot real dentro de una cuadrícula de píxeles, de tal manera que se determina la posición del robot real dentro de la cuadrícula de píxeles.
+
+Al final de la simulación, se genera una representación gráfica de la trayectoria ideal y la trayectoria seguida por el robot. Este script proporciona una herramienta de simulación para evaluar el rendimiento de la localización del robot y su capacidad para seguir trayectorias específicas en un entorno simulado.
+
 \section{Ejecución del código}
+
+Tras la explicación de la implementación de la localización, se procede a la ejecución del script para la comprobación del funcionamiento del mismo. Para ello, se ejecuta el siguiente comando en la terminal:
+
+\begin{lstlisting}[style=bash, caption={Ejecución del script de Localización}, label=bash]
+  $  python3 Localization-script-implementation.py 4
+\end{lstlisting}
+
+Tras esto, se obtiene el siguiente resultado:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{src/img/Localization-Result.png}
+    \caption{Resultado de la ejecución del script de Localización}
+    \label{fig:localization-script-implementation}
+\end{figure}
 
 \section{Parámetros modificados}
 
+En cuanto a los parámetros modificados durante la implementación de la localización, se pueden tener en cuenta los siguientes parámetros por ejemplo:
+
+\begin{lstlisting}[style=python, caption={Ejecución de la primera operación de Localización}, label=python-script-first-operation]
+    localizacion(objetivos,real,ideal, [0, 4],5,1)
+\end{lstlisting}
+
+Como se puede observar anteriormente, se pueden modificar los parámetros de \emph{centro}, que para este caso tome como ejemplo \emph{[0, 4]}, los parámetros de \emph{radio}, que para este caso tome como ejemplo \emph{5}. Por tanto, dependiendo de los valores que sean establecidos en estos campos, el resultado de la localización será uno u otro.
+
+Otro de los parámetros con los que se ha jugado un poco ha sido el radio de la localización en el momento en el que se determina que la distancia entre el robot real y el ideal es mayor que un umbral, este valor se puede observar en el trozo de código adjunto a continuación:
+
+\begin{lstlisting}[style=python, caption={Localización del robot}, label=python-robot-localization]
+    if (real.measurement_prob(real.sense(objetivos), objetivos) > EPSILON):
+        localizacion(objetivos, real, ideal, ideal.pose(), 0.2, mostrar=0)
+\end{lstlisting}
+
+Como se puede observar en el trozo de código anterior, se puede modificar el valor del radio de la localización, el cual se encuentra en el campo \emph{0.2}. Cuanto menor sea dicho valor, más preciso será el resultado de la localización, pero, por el contrario, cuanto mayor sea dicho valor, menos preciso será el resultado de esta.
+
 \section{Mejoras en la implementación}
 
+Tras la explicación del script de localización suministrado, se pueden tomar como mejoras de esta práctica pues el hecho de la visualización final del robot, es decir, se podría realizar la implementación de la visualización del robot en otros tipos de entornos gráficos, como por ejemplo, \emph{Blender}. Es decir, se podría realizar la implementación de la visualización del robot en un entorno gráfico más realista, en el cual se pueda observar al robot desplazarse en tiempo real, y no mediante una serie de imágenes estáticas, de tal manera que el alumnado pueda comprender de manera mucho más sencilla y visual el funcionamiento de la localización, es decir, tener tanto al robot real como al robot ideal en tiempo real, de esta manera, cuando se aplique la localización, se pueda observar como el robot real se desplaza hasta la posición del robot ideal.
+
+Para poder conectar los scripts en python con \emph{Blender}, se puede hacer uso de la librería \emph{bpy} \cite{6}, la cual permite la conexión de scripts en python con \emph{Blender}, de tal manera que se podría realizar la implementación de la práctica en python de la misma manera que hasta el momento, pero, cuando se ejecute la operación de localización dentro del script, se pare la visualización en tiempo real de Blender para poder ejecutar una nueva visualización de la localización del robot.
+
 \section{Conclusiones}
+
+Para concluir con la práctica de Localización, se puede decir que se ha conseguido realizar la implementación de la localización de un robot móvil mediante el empleo de una serie de balizas en el entorno, las cuales permiten al robot móvil conocer su posición en el entorno, además, se hace uso de otro robot móvil denominado como \emph{"robot real"}, el cual se encarga de marcar la diferenciación con respecto al robot móvil al que se debe de aplicar la localización cada vez que este se desvíe o se pierda. 
+
+Esta práctica me ha resultado personalmente la más interesante de las tres prácticas realizadas, ya que el hecho de poder ver como dependiendo de los valores que se le introduzcan a los distintos parámetros de la localización, se tenga que el robot sea más preciso o menos, me resulta muy interesante, porque para mi, la localización es una de las partes más importantes de la robótica, ya que si no se tiene una buena localización, el robot no podrá realizar las tareas que se le encomienden de manera correcta.
 
 \chapter{Filtro de partículas}
 
 \section{¿Qué es un filtro de partículas?}
 
-\chapter{Conclusiones}
+El filtro de partículas es un método de estimación de estado que utiliza una aproximación basada en muestras para representar la distribución de probabilidad de un estado. El filtro de partículas es un método no paramétrico, lo que significa que no hace suposiciones sobre la forma de la distribución de probabilidad. En cambio, el filtro de partículas representa la distribución de probabilidad mediante una colección de muestras, llamadas partículas, que se distribuyen de acuerdo con la distribución de probabilidad. 
+
+La idea fundamental se basa en representar la función de distribución posterior buscada con un conjunto de muestras aleatorias con pesos asociados y calcular estimados basados en estas muestras y pesos.
 
 \begin{thebibliography}{99}
   \bibitem{1} UdeSantigoVirtual. [2023]. Herramientas matemáticas. Universidad de Santiago de Chile. Recuperado de \url{http://www.udesantiagovirtual.cl/moodle2/mod/book/view.php?id=24916}
@@ -332,6 +430,11 @@ Para concluir, se puede decir que se ha conseguido realizar la implementación d
   \bibitem{5} Universidad de La Laguna. [2023]. Cinemática Directa mediante Denavit-Hartenberg. Universidad de La Laguna. \url{https://drive.google.com/file/d/1639F9ebw14zquNaZcDf6o_u-_Tpaksh4/view?usp=sharing}
   \bibitem{6} Comunidad Python. [2023]. bpy - Blender Python. Comunidad Python. \url{https://pypi.org/project/bpy/}
   \bibitem{7} Escamilla Losoyo José de Jesús. [2020]. Cinemática inversa. Studocu. \url{https://www.studocu.com/es-mx/document/instituto-tecnologico-de-leon/robotica/cinematica-inversa/12281135}
+  \bibitem{8} Tekniker. [2023]. Localización y planificación de trayectorias. Tekniker. \url{https://www.tekniker.es/es/localizacion-y-planificacion-de-trayectorias}
+  \bibitem{9} Wikipedia. [2023]. Filtro de partículas. Wikipedia. \url{https://es.wikipedia.org/wiki/Filtro_de_part%C3%ADculas}
+  \bibitem{10} Azucena Fuentes Ríos. [2011]. LOCALIZACIÓN Y MODELADO SIMULTÁNEOS
+  EN ROS PARA LA PLATAFORMA ROBÓTICA
+  MANFRED. Universidad Carlos III de Madrid. \url{https://e-archivo.uc3m.es/bitstream/handle/10016/13392/pfc_Azucena_Fuentes_Rios.pdf?sequence=1&isAllowed=y}
 \end{thebibliography}
 
 \end{document}
