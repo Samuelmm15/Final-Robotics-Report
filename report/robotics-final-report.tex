@@ -16,6 +16,7 @@
 \usepackage{wrapfig}
 \usepackage{xcolor}
 \usepackage{fancyhdr}
+\usepackage{tikz}
 
 % Configuración de fancyhdr
 \pagestyle{fancy}
@@ -33,6 +34,7 @@
 
 % Línea horizontal en la parte superior del encabezado
 \renewcommand{\headrulewidth}{0.4pt}
+
 
 \definecolor{bashgreen}{RGB}{0, 128, 0}
 \definecolor{bashgray}{RGB}{128, 128, 128}
@@ -81,7 +83,21 @@
 
 % Redefinir el formato del capítulo
 \titleformat{\chapter}[block]
-  {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{1em}{\Huge}
+  {\normalfont\huge\bfseries}
+  {}
+  {0pt}
+  {%
+    \begin{tikzpicture}[overlay, remember picture]
+      \node[anchor=north west, inner sep=0pt] at (current page.north west) {
+        \begin{tikzpicture}[remember picture, overlay]
+          \draw[fill=gray!30, draw=gray!80, line width=2pt]
+            (0,0) rectangle (\the\textwidth, -1.5cm);
+          \node[anchor=north west, text=black, font=\Huge\bfseries]
+            at (0.5, -0.75) {Capítulo \thechapter};
+        \end{tikzpicture}
+      };
+    \end{tikzpicture}
+  }
 
 % Ajustar el espaciado antes y después del título del capítulo
 \titlespacing*{\chapter}{0pt}{0pt}{20pt}
@@ -95,11 +111,23 @@
 
 % Portada del informe
 
-\title{Robótica Computacional}
-\author{Samuel Martín Morales  \texttt{alu0101359526@ull.edu.es}}
-\date{\today}
-
-\maketitle
+\begin{titlepage}
+    \centering
+    {\includegraphics[width=0.4\textwidth]{src/img/logo.jpg}\par}
+    \vspace{1cm}
+    {\bfseries\LARGE Escuela Superior de Ingeniería y Tecnología\par}
+    \vspace{1cm}
+    {\scshape\Large Facultad de Ingeniería Informática \par}
+    \vspace{3cm}
+    {\scshape\Huge Robótica Computacional \par}
+    \vspace{3cm}
+    {\itshape\Large Informe de prácticas \par}
+    \vfill
+    {\Large Autor: \par}
+    {\Large Samuel Martín Morales \par}
+    \vfill
+    {\Large Diciembre 2023 \par}
+    \end{titlepage} 
 
 % Índice
 \tableofcontents
